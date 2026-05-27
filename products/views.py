@@ -1075,6 +1075,17 @@ class ProductTypeConfigViewSet(viewsets.ModelViewSet):
         is_active = self.request.query_params.get("is_active")
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() in {"1", "true", "yes"})
+
+        user = getattr(self.request, "user", None)
+        is_admin_or_worker = (
+            user
+            and user.is_authenticated
+            and hasattr(user, "profile")
+            and user.profile.role in ("admin", "worker")
+        )
+        if not is_admin_or_worker:
+            queryset = queryset.exclude(slug__in=["service", "other"])
+
         return queryset
 
 
