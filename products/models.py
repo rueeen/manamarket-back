@@ -145,7 +145,11 @@ class Product(models.Model):
     stock_minimum = models.PositiveIntegerField(default=0)
     average_cost_clp = models.PositiveIntegerField(default=0)
     last_purchase_cost_clp = models.PositiveIntegerField(default=0)
-    image = models.URLField(blank=True)
+    image = models.ImageField(
+        upload_to='products/',
+        blank=True,
+        null=True,
+    )
     is_active = models.BooleanField(default=True)
     notes = models.TextField(blank=True)
     # Precio de referencia externo (USD) sin conversión ni margen local.
