@@ -124,7 +124,7 @@ class ProductSerializer(serializers.ModelSerializer):
     bundle_items = BundleItemSerializer(many=True, read_only=True)
 
     computed_price_clp = serializers.IntegerField(read_only=True)
-    available_stock = serializers.IntegerField(read_only=True)
+    available_stock = serializers.SerializerMethodField()
     cost_real_clp = serializers.IntegerField(read_only=True)
     margin_clp = serializers.SerializerMethodField()
     margin_percentage = serializers.SerializerMethodField()
@@ -249,6 +249,9 @@ class ProductSerializer(serializers.ModelSerializer):
             or 0
         )
 
+    def get_available_stock(self, obj):
+        return obj.available_stock
+
 
 
 class ProductPublicSerializer(serializers.ModelSerializer):
@@ -258,7 +261,7 @@ class ProductPublicSerializer(serializers.ModelSerializer):
     product_type_display = serializers.CharField(source="get_product_type_display", read_only=True)
     product_type_config_name = serializers.CharField(source="product_type_config.name", read_only=True)
     computed_price_clp = serializers.IntegerField(read_only=True)
-    available_stock = serializers.IntegerField(read_only=True)
+    available_stock = serializers.SerializerMethodField()
     single_card = SingleCardSerializer(read_only=True)
     sealed_product = SealedProductSerializer(read_only=True)
     bundle_items = BundleItemSerializer(many=True, read_only=True)
@@ -291,11 +294,14 @@ class ProductPublicSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
+    def get_available_stock(self, obj):
+        return obj.available_stock
+
 
 class ProductCatalogSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField(read_only=True)
     computed_price_clp = serializers.IntegerField(read_only=True)
-    available_stock = serializers.IntegerField(read_only=True)
+    available_stock = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -311,6 +317,9 @@ class ProductCatalogSerializer(serializers.ModelSerializer):
             "image",
             "is_active",
         )
+
+    def get_available_stock(self, obj):
+        return obj.available_stock
 
 
 class CategorySerializer(serializers.ModelSerializer):

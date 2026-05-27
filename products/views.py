@@ -422,11 +422,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         if params.get("available") == "true":
             queryset = queryset.filter(
                 is_active=True,
-                stock__gt=0,
                 price_clp__gt=0,
-            ).exclude(
-                last_purchase_cost_clp__gt=0,
-                price_clp__lt=models.F("last_purchase_cost_clp"),
+            ).filter(
+                stock__gt=models.F("stock_reserved"),
             )
 
         if params.get("profitable") == "true":
