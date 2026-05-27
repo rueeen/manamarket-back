@@ -14,7 +14,7 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes', 'on')
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', '').split(',') if host.strip()]
+ALLOWED_HOSTS=localhost,127.0.0.1,rvalencia.pythonanywhere.com
 
 INSTALLED_APPS = [
     'django.contrib.admin',
