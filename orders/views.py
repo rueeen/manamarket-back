@@ -183,6 +183,21 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
                 )
                 # No bloquear el cambio de estado, solo registrar el error
 
+        # Enviar correo de actualización de estado
+        status_to_notify = {
+            Order.Status.PROCESSING,
+            Order.Status.SHIPPED,
+            Order.Status.DELIVERED,
+            Order.Status.COMPLETED,
+            Order.Status.CANCELED,
+        }
+        if order.status in status_to_notify:
+            try:
+                from store_backend.email_service import send_order_status_update
+                send_order_status_update(order)
+            except Exception as exc:
+                logger.error('Error enviando correo de estado: %s', exc)
+
         return Response(self.get_serializer(order).data)
 
     @action(detail=True, methods=["post"], url_path="cancel")

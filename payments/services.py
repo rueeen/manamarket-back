@@ -231,4 +231,13 @@ def finalize_paid_order(order, payment):
         cart.items.all().delete()
     except Cart.DoesNotExist:
         pass
+
+    # Enviar correo de confirmación
+    try:
+        from store_backend.email_service import send_order_confirmation
+        send_order_confirmation(locked)
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).error('Error enviando correo de confirmación: %s', exc)
+
     return locked
