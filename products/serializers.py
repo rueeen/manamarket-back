@@ -132,6 +132,7 @@ class ProductSerializer(serializers.ModelSerializer):
     margen_clp = serializers.SerializerMethodField()
     margen_pct = serializers.SerializerMethodField()
     is_profitable = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -164,6 +165,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "margen_pct",
             "is_profitable",
             "image",
+            "image_file",
+            "image_url",
             "is_active",
             "notes",
             "price_external_usd",
@@ -252,6 +255,14 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_available_stock(self, obj):
         return obj.available_stock
 
+    def get_image_url(self, obj):
+        if obj.image_file:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.image_file.url)
+            return obj.image_file.url
+        return obj.image or ""
+
 
 
 class ProductPublicSerializer(serializers.ModelSerializer):
@@ -265,6 +276,7 @@ class ProductPublicSerializer(serializers.ModelSerializer):
     single_card = SingleCardSerializer(read_only=True)
     sealed_product = SealedProductSerializer(read_only=True)
     bundle_items = BundleItemSerializer(many=True, read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -283,6 +295,8 @@ class ProductPublicSerializer(serializers.ModelSerializer):
             "computed_price_clp",
             "available_stock",
             "image",
+            "image_file",
+            "image_url",
             "is_active",
             "pricing_source",
             "pricing_last_update",
@@ -296,6 +310,14 @@ class ProductPublicSerializer(serializers.ModelSerializer):
 
     def get_available_stock(self, obj):
         return obj.available_stock
+
+    def get_image_url(self, obj):
+        if obj.image_file:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.image_file.url)
+            return obj.image_file.url
+        return obj.image or ""
 
 
 class ProductCatalogSerializer(serializers.ModelSerializer):
