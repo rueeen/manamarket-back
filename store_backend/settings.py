@@ -147,6 +147,8 @@ SIMPLE_JWT = {
 _cors_origins_env = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173')
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins_env.split(',') if origin.strip()]
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 WEBPAY_ENVIRONMENT = os.getenv('WEBPAY_ENVIRONMENT', 'integration')
 WEBPAY_COMMERCE_CODE = os.getenv('WEBPAY_COMMERCE_CODE', '')
 WEBPAY_API_KEY_SECRET = os.getenv('WEBPAY_API_KEY_SECRET', '')
