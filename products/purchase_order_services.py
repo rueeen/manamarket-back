@@ -142,11 +142,18 @@ def calculate_purchase_order_totals(order):
 
         subtotal_clp += line_clp
 
-    shipping_clp = convert_money_to_clp(
-        order.shipping_original,
-        currency,
-        rate,
-    )
+    # Respetar el override si fue seteado manualmente (> 0)
+    if order.shipping_clp and order.shipping_clp > 0:
+        shipping_clp = int(order.shipping_clp)
+    else:
+        shipping_clp = convert_money_to_clp(
+            order.shipping_original,
+            currency,
+            rate,
+        )
+        # Guardar el valor calculado para consistencia
+        order.shipping_clp = shipping_clp
+        order.save(update_fields=["shipping_clp"])
     sales_tax_clp = convert_money_to_clp(
         order.sales_tax_original,
         currency,
