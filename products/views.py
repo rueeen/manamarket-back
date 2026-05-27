@@ -1477,6 +1477,21 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             currency = str(parsed.get("currency") or "USD").upper()
             exchange_rate = self._get_exchange_rate_for_currency(currency)
+            # Si el usuario envió un valor de envío manual, reemplaza al detectado del Excel
+            shipping_override_clp = int(
+                request.data.get("shipping_clp_override") or 0)
+            if shipping_override_clp > 0:
+                # Convertir de CLP a moneda original para mantener consistencia en el modelo
+                if exchange_rate and exchange_rate > 0:
+                    shipping_original_value = (
+                        Decimal(str(shipping_override_clp))
+                        / Decimal(str(exchange_rate))
+                    )
+                else:
+                    shipping_original_value = Decimal("0")
+            else:
+                shipping_original_value = Decimal(
+                    parsed["totals"]["shipping_original"])
 
             purchase_order = PurchaseOrder.objects.create(
                 supplier=supplier,
@@ -1489,8 +1504,7 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
                 exchange_rate_snapshot_clp=exchange_rate,
                 subtotal_original=Decimal(
                     parsed["totals"]["subtotal_original"]),
-                shipping_original=Decimal(
-                    parsed["totals"]["shipping_original"]),
+                shipping_original=shipping_original_value,
                 sales_tax_original=Decimal(
                     parsed["totals"]["sales_tax_original"]),
                 total_original=Decimal(parsed["totals"]["total_original"]),
