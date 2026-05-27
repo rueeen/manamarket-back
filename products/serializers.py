@@ -133,6 +133,7 @@ class ProductSerializer(serializers.ModelSerializer):
     margen_pct = serializers.SerializerMethodField()
     is_profitable = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
+    image = serializers.URLField(required=False, allow_blank=True, default='')
 
     class Meta:
         model = Product
