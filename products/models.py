@@ -145,7 +145,8 @@ class Product(models.Model):
     stock_minimum = models.PositiveIntegerField(default=0)
     average_cost_clp = models.PositiveIntegerField(default=0)
     last_purchase_cost_clp = models.PositiveIntegerField(default=0)
-    image = models.ImageField(
+    image = models.URLField(blank=True, default='')
+    image_file = models.ImageField(
         upload_to='products/',
         blank=True,
         null=True,
